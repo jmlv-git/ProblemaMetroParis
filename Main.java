@@ -1,6 +1,55 @@
 import java.util.*;
-public class Main {
 
+
+public class Main {
+	
+	
+	
+	
+	
+	public static void adicionar(Node[] a, Node b) {
+		Node[] a2= new Node[a.length+1];
+		for (int i = 0; i < a.length; i++) {
+			a2[i+1]=a[i];
+		}
+		a2[0]=b;
+		a=a2;
+	}
+	
+	public static void remover(Node[] a) {
+		Node[] a2= new Node[a.length-1];
+		for (int i = 1; i < a.length; i++) {
+			a2[i-1]=a[i];
+		}
+		a=a2;
+	}
+	
+	public static void append(int[] a, int size, int b) {
+		a[size]=b;
+	}
+	
+	public static void ordenar(Node[] a) {
+		
+		
+		Node aux ;
+		int i = 0;
+		
+		
+		
+		for(i = 0; i<a.length; i++){
+			for(int j = 0; j<a.length-1; j++){
+				if(!a[j].equals(null) && !a[j+1].equals(null) && a[j].g+a[j].h > a[j + 1].g+a[j + 1].h){
+					aux = a[j];//verificar essa questao do null
+					a[j] = a[j+1];
+					a[j+1] = aux;
+				}
+			}
+		}
+		
+		
+	}
+	
+	
 	public static void main(String[] args) {
 		Scanner in =new Scanner(System.in);
 		float[][] h = new float[14][14];
@@ -15,6 +64,8 @@ public class Main {
 				}
 			}
 		}
+		
+		
 		// Preenchendo tabela:
 		// linha 1
 		h[0][1] = 10;
@@ -133,13 +184,7 @@ public class Main {
 			}
 		}
 
-		// printando
-//		for (int i = 0; i < h.length; i++) {
-//			for (int j = 0; j < h.length; j++) {
-//				System.out.print(h[i][j]+"   	");
-//			}System.out.println();
-//		}
-
+		
 		// transformando tabela h de distancias ideais entre estações para gasto de
 		// tempo ideal (em minuto):
 
@@ -149,18 +194,68 @@ public class Main {
 			}
 		}
 
-		// printando
-//		for (int i = 0; i < h.length; i++) {
-//			for (int j = 0; j < h.length; j++) {
-//				System.out.print(h[i][j] + "   	");
-//			}
-//			System.out.println();
-//		}
+		
 
 		
 	System.out.println("Digite o número de sua estação atual");	
+		int Ei=in.nextInt();
+		Ei--;	//estacao x fica no indice x-1
+	System.out.println("Digite o número da estação final desejada");	
+		int Ef=in.nextInt();	
+		Ef--;
+		float[] funcH= h[Ef];//função heuristica que vai ser usada
+		float[][] g = new float[14][14];// dist real, matriz de adjacencias
+		Node[] front = new Node[1];
+		
+		ArrayList<Node> caminho= new ArrayList<>();
+		
+		Node Na= new Node(Ei, funcH[Ei],0);
+		Node Nf= new Node(Ef, 0,0);
+		
+		//adicionar(front,Na);
+		front[0]=Na;
+		while (true) {
+			
+			if (Na.id==Nf.id) {
+				break;
+			}else {
+				remover(front);
+				caminho.add(Na);
+				for (int i = 0; i < g.length; i++) {
+					if (g[Na.id][i]!=-1) {
+						Node newNode= new Node(i, funcH[i],g[Na.id][i]+Na.g);//id=i h = funcH g = dist do no atual + dist acumulada
+						adicionar(front,newNode);
+					}
+				}
+				//ordenar a fronteira
+				ordenar(front);
+				for (int i = 0; i < front.length; i++) {
+					if(front[i].equals(null)) {
+						System.out.println("null  ");
+					}else
+					System.out.print(front[i]+"  ");
+				}
+				Na=front[0];
+			}
+			
+		}
+		
 		
 		
 	}
 
 }
+
+class Node{
+	int id;
+	float f;
+	float g;
+	float h;
+	public Node(int nDoNode,float h,float g) {
+		id=nDoNode;
+		this.g=g;
+		this.h=h;
+		this.f=h;// nao está sendo util
+	}
+}
+
